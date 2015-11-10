@@ -1,4 +1,3 @@
-
 package org.jbake.app;
 
 import java.io.File;
@@ -14,8 +13,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Tests basic Markdown syntax and the extensions supported by the Markdown
- * processor (Pegdown).
+ * Tests basic Markdown syntax and the extensions supported by the Markdown processor (Pegdown).
  * 
  * @author Jonathan Bullock <jonbullock@gmail.com>
  * @author Kevin S. Clarke <ksclarke@gmail.com>

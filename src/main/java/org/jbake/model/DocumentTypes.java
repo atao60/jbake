@@ -5,8 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Utility class used to determine the list of document types. Currently only supports "page", "post", "index",
- * "archive" and "feed".
+ * Utility class used to determine the list of document types. Currently only supports "page",
+ * "post", "index", "archive" and "feed".
  * <p/>
  * Additional document types are added at runtime based on the types found in the configuration.
  *
@@ -14,7 +14,8 @@ import java.util.Set;
  */
 public class DocumentTypes {
 
-    private static final Set<String> DEFAULT_DOC_TYPES = new LinkedHashSet<String>(Arrays.asList("page", "post", "masterindex", "archive", "feed"));
+    private static final Set<String> DEFAULT_DOC_TYPES = new LinkedHashSet<String>(Arrays.asList("page", "post",
+            "masterindex", "archive", "feed"));
 
     public static void addDocumentType(String docType) {
         DEFAULT_DOC_TYPES.add(docType);

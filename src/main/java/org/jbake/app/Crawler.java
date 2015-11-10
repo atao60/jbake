@@ -48,7 +48,8 @@ public class Crawler {
     /**
      * Crawl all files and folders looking for content.
      *
-     * @param path Folder to start from
+     * @param path
+     *            Folder to start from
      */
     public void crawl(File path) {
         File[] contents = path.listFiles(FileUtil.getFileFilter());
@@ -102,20 +103,20 @@ public class Crawler {
         }
         return sha1;
     }
-    
+
     private String buildURI(final File sourceFile) {
-    	String uri = FileUtil.asPath(sourceFile.getPath()).replace(FileUtil.asPath( contentPath), "");
-    	// strip off leading / to enable generating non-root based sites
-    	if (uri.startsWith("/")) {
-    		uri = uri.substring(1, uri.length());
-    	}
+        String uri = FileUtil.asPath(sourceFile.getPath()).replace(FileUtil.asPath(contentPath), "");
+        // strip off leading / to enable generating non-root based sites
+        if (uri.startsWith("/")) {
+            uri = uri.substring(1, uri.length());
+        }
         return uri;
     }
 
     private void crawlSourceFile(final File sourceFile, final String sha1, final String uri) {
         Map<String, Object> fileContents = parser.processFile(sourceFile);
         if (fileContents != null) {
-        	fileContents.put("rootpath", getPathToRoot(sourceFile));
+            fileContents.put("rootpath", getPathToRoot(sourceFile));
             fileContents.put("sha1", sha1);
             fileContents.put("rendered", false);
             if (fileContents.get("tags") != null) {
@@ -124,7 +125,10 @@ public class Crawler {
                 fileContents.put("tags", tags);
             }
             fileContents.put("file", sourceFile.getPath());
-            fileContents.put("uri", uri.substring(0, uri.lastIndexOf(".")) + FileUtil.findExtension(config, fileContents.get("type").toString()));
+            fileContents.put(
+                    "uri",
+                    uri.substring(0, uri.lastIndexOf("."))
+                            + FileUtil.findExtension(config, fileContents.get("type").toString()));
 
             String documentType = (String) fileContents.get("type");
             if (fileContents.get("status").equals("published-date")) {
@@ -136,7 +140,8 @@ public class Crawler {
             }
             ODocument doc = new ODocument(documentType);
             doc.fields(fileContents);
-            boolean cached = fileContents.get("cached") != null ? Boolean.valueOf((String)fileContents.get("cached")):true;
+            boolean cached =
+                    fileContents.get("cached") != null ? Boolean.valueOf((String) fileContents.get("cached")) : true;
             doc.field("cached", cached);
             doc.save();
         } else {
@@ -145,20 +150,20 @@ public class Crawler {
     }
 
     public String getPathToRoot(File sourceFile) {
-    	File rootPath = new File(contentPath);
-    	File parentPath = sourceFile.getParentFile();
-    	int parentCount = 0;
-    	while (!parentPath.equals(rootPath)) {
-    		parentPath = parentPath.getParentFile();
-    		parentCount++;
-    	}
-    	StringBuffer sb = new StringBuffer();
-    	for (int i = 0; i < parentCount; i++) {
-    		sb.append("../");
-    	}
-    	return sb.toString();
+        File rootPath = new File(contentPath);
+        File parentPath = sourceFile.getParentFile();
+        int parentCount = 0;
+        while (!parentPath.equals(rootPath)) {
+            parentPath = parentPath.getParentFile();
+            parentCount++;
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < parentCount; i++) {
+            sb.append("../");
+        }
+        return sb.toString();
     }
-    
+
     public int getDocumentCount(String docType) {
         return (int) db.countClass(docType);
     }

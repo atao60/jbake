@@ -29,13 +29,19 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.jbake.app.ContentStore;
 
 /**
- * <p>A template engine which renders pages using Thymeleaf.</p>
+ * <p>
+ * A template engine which renders pages using Thymeleaf.
+ * </p>
  *
- * <p>This template engine is not recommanded for large sites because the whole model
- * is loaded into memory due to Thymeleaf internal limitations.</p>
+ * <p>
+ * This template engine is not recommanded for large sites because the whole model is loaded into
+ * memory due to Thymeleaf internal limitations.
+ * </p>
  *
- * <p>The default rendering mode is "HTML5", but it is possible to use another mode
- * for each document type, by adding a key in the configuration, for example:</p>
+ * <p>
+ * The default rendering mode is "HTML5", but it is possible to use another mode for each document
+ * type, by adding a key in the configuration, for example:
+ * </p>
  * <p/>
  * <code>
  *     template.feed.thymeleaf.mode=XML
@@ -49,7 +55,8 @@ public class ThymeleafTemplateEngine extends AbstractTemplateEngine {
     private TemplateEngine templateEngine;
     private FileTemplateResolver templateResolver;
 
-    public ThymeleafTemplateEngine(final CompositeConfiguration config, final ContentStore db, final File destination, final File templatesPath) {
+    public ThymeleafTemplateEngine(final CompositeConfiguration config, final ContentStore db, final File destination,
+            final File templatesPath) {
         super(config, db, destination, templatesPath);
         initializeTemplateEngine();
     }
@@ -61,7 +68,10 @@ public class ThymeleafTemplateEngine extends AbstractTemplateEngine {
         templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
         try {
-            IDialect condCommentDialect = (IDialect) Class.forName("org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect").newInstance();
+            IDialect condCommentDialect =
+                    (IDialect) Class.forName(
+                            "org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect")
+                            .newInstance();
             templateEngine.addDialect(condCommentDialect);
         } catch (Exception e) {
             // Sad, but true and not a real problem
@@ -69,13 +79,14 @@ public class ThymeleafTemplateEngine extends AbstractTemplateEngine {
     }
 
     @Override
-    public void renderDocument(final Map<String, Object> model, final String templateName, final Writer writer) throws RenderingException {
+    public void renderDocument(final Map<String, Object> model, final String templateName, final Writer writer)
+            throws RenderingException {
         String localeString = config.getString(Keys.THYMELEAF_LOCALE);
         Locale locale = localeString != null ? LocaleUtils.toLocale(localeString) : Locale.getDefault();
         Context context = new Context(locale, wrap(model));
         lock.lock();
         try {
-        	initializeTemplateEngine();
+            initializeTemplateEngine();
             @SuppressWarnings("unchecked")
             Map<String, Object> config = (Map<String, Object>) model.get("config");
             @SuppressWarnings("unchecked")
@@ -141,25 +152,25 @@ public class ThymeleafTemplateEngine extends AbstractTemplateEngine {
             }
             return result;
         }
-        
+
         private Object getPublishedContent() {
-        	List<ODocument> publishedContent = new ArrayList<ODocument>();
-        	String[] documentTypes = DocumentTypes.getDocumentTypes();
-        	for (String docType : documentTypes) {
-        		List<ODocument> query = db.getPublishedContent(docType);
-        		publishedContent.addAll(query);
-        	}
-        	return DocumentList.wrap(publishedContent.iterator());
+            List<ODocument> publishedContent = new ArrayList<ODocument>();
+            String[] documentTypes = DocumentTypes.getDocumentTypes();
+            for (String docType : documentTypes) {
+                List<ODocument> query = db.getPublishedContent(docType);
+                publishedContent.addAll(query);
+            }
+            return DocumentList.wrap(publishedContent.iterator());
         }
-        
+
         private Object getAllContent() {
-        	List<ODocument> allContent = new ArrayList<ODocument>();
-        	String[] documentTypes = DocumentTypes.getDocumentTypes();
-        	for (String docType : documentTypes) {
-        		List<ODocument> query = db.getAllContent(docType);
-        		allContent.addAll(query);
-        	}
-        	return DocumentList.wrap(allContent.iterator());
+            List<ODocument> allContent = new ArrayList<ODocument>();
+            String[] documentTypes = DocumentTypes.getDocumentTypes();
+            for (String docType : documentTypes) {
+                List<ODocument> query = db.getAllContent(docType);
+                allContent.addAll(query);
+            }
+            return DocumentList.wrap(allContent.iterator());
         }
     }
 }

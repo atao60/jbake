@@ -45,11 +45,11 @@ public class Parser {
     /**
      * Process the file by parsing the contents.
      *
-     * @param    file
+     * @param file
      * @return The contents of the file
      */
     public Map<String, Object> processFile(File file) {
-        Map<String,Object> content = new HashMap<String, Object>();
+        Map<String, Object> content = new HashMap<String, Object>();
         InputStream is = null;
         List<String> fileContents = null;
         try {
@@ -60,7 +60,7 @@ public class Parser {
 
             return null;
         } finally {
-          IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(is);
         }
 
         boolean hasHeader = hasHeader(fileContents);
@@ -71,11 +71,11 @@ public class Parser {
                 contentPath,
                 hasHeader,
                 content
-        );
+                );
 
         MarkupEngine engine = Engines.get(FileUtil.fileExt(file));
-        if (engine==null) {
-            LOGGER.warn("Unable to find suitable markup engine for {}",file);
+        if (engine == null) {
+            LOGGER.warn("Unable to find suitable markup engine for {}", file);
             return null;
         }
 
@@ -85,16 +85,16 @@ public class Parser {
         }
         // then read engine specific headers
         engine.processHeader(context);
-        
+
         if (config.getString(Keys.DEFAULT_STATUS) != null) {
-        	// default status has been set
-        	if (content.get("status") == null) {
-        		// file hasn't got status so use default
-        		content.put("status", config.getString(Keys.DEFAULT_STATUS));
-        	}
+            // default status has been set
+            if (content.get("status") == null) {
+                // file hasn't got status so use default
+                content.put("status", config.getString(Keys.DEFAULT_STATUS));
+            }
         }
 
-        if (content.get("type")==null||content.get("status")==null) {
+        if (content.get("type") == null || content.get("status") == null) {
             // output error
             LOGGER.warn("Error parsing meta data from header (missing type or status value) for file {}!", file);
             return null;
@@ -112,25 +112,26 @@ public class Parser {
         }
 
         if (content.get("tags") != null) {
-        	String[] tags = (String[]) content.get("tags");
-            for( int i=0; i<tags.length; i++ ) {
-                tags[i]=tags[i].trim();
+            String[] tags = (String[]) content.get("tags");
+            for (int i = 0; i < tags.length; i++) {
+                tags[i] = tags[i].trim();
                 if (config.getBoolean(Keys.TAG_SANITIZE)) {
-                	tags[i]=tags[i].replace(" ", "-");
+                    tags[i] = tags[i].replace(" ", "-");
                 }
             }
             content.put("tags", tags);
         }
-        
+
         // TODO: post parsing plugins to hook in here?
-        
+
         return content;
     }
 
     /**
      * Checks if the file has a meta-data header.
      *
-     * @param contents Contents of file
+     * @param contents
+     *            Contents of file
      * @return true if header exists, false if not
      */
     private boolean hasHeader(List<String> contents) {
@@ -177,7 +178,8 @@ public class Parser {
     /**
      * Process the header of the file.
      *
-     * @param contents Contents of file
+     * @param contents
+     *            Contents of file
      * @param content
      */
     private void processHeader(List<String> contents, final Map<String, Object> content) {
@@ -185,7 +187,7 @@ public class Parser {
             if (line.equals("~~~~~~")) {
                 break;
             } else {
-                String[] parts = line.split("=",2);
+                String[] parts = line.split("=", 2);
                 if (parts.length == 2) {
                     if (parts[0].equalsIgnoreCase("date")) {
                         DateFormat df = new SimpleDateFormat(config.getString(Keys.DATE_FORMAT));
@@ -213,7 +215,8 @@ public class Parser {
     /**
      * Process the body of the file.
      *
-     * @param contents Contents of file
+     * @param contents
+     *            Contents of file
      * @param content
      */
     private void processBody(List<String> contents, final Map<String, Object> content) {
@@ -233,7 +236,7 @@ public class Parser {
                 body.append(line).append("\n");
             }
         }
-        
+
         content.put("body", body.toString());
     }
 

@@ -7,12 +7,11 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Wraps an OrientDB document iterator into a model usable by
- * template engines.
+ * Wraps an OrientDB document iterator into a model usable by template engines.
  *
  * @author Cédric Champeau
  */
-public class DocumentList extends LinkedList<Map<String,Object>> {
+public class DocumentList extends LinkedList<Map<String, Object>> {
 
     public static DocumentList wrap(Iterator<ODocument> docs) {
         DocumentList list = new DocumentList();
@@ -23,7 +22,6 @@ public class DocumentList extends LinkedList<Map<String,Object>> {
         return list;
     }
 
-    public DocumentList() {
-    }
+    public DocumentList() {}
 
 }

@@ -78,7 +78,8 @@ public class FileUtil {
     /**
      * Computes the hash of a file or directory.
      *
-     * @param sourceFile the original file or directory
+     * @param sourceFile
+     *            the original file or directory
      * @return an hex string representing the SHA1 hash of the file or directory.
      * @throws Exception
      */
@@ -94,7 +95,8 @@ public class FileUtil {
         return sb.toString();
     }
 
-    private static void updateDigest(final MessageDigest digest, final File sourceFile, final byte[] buffer) throws IOException {
+    private static void updateDigest(final MessageDigest digest, final File sourceFile, final byte[] buffer)
+            throws IOException {
         if (sourceFile.isFile()) {
             InputStream fis = new FileInputStream(sourceFile);
             int numRead;
@@ -107,7 +109,7 @@ public class FileUtil {
             fis.close();
         } else if (sourceFile.isDirectory()) {
             File[] files = sourceFile.listFiles();
-            if (files!=null) {
+            if (files != null) {
                 for (File file : files) {
                     updateDigest(digest, file, buffer);
                 }
@@ -116,38 +118,40 @@ public class FileUtil {
     }
 
     public static String findExtension(CompositeConfiguration config, String docType) {
-    	String extension = config.getString("template."+docType+".extension");
-    	if (extension != null) {
-    		return extension;
-    	} else {
-    		return config.getString(Keys.OUTPUT_EXTENSION);
-    	}
+        String extension = config.getString("template." + docType + ".extension");
+        if (extension != null) {
+            return extension;
+        } else {
+            return config.getString(Keys.OUTPUT_EXTENSION);
+        }
     }
-    
-	/**
-	 * platform independent file.getPath() 
-	 * 
-	 * @param file the file to transform, or {@code null}
-	 * @return The result of file.getPath() with all path Separators beeing a "/", or {@code null} 
-	 *         Needed to transform Windows path separators into slashes.
-	 */
-	public static String asPath(File file) {
-		if(file == null) {
-			return null;
-		}
-	    return asPath(file.getPath());
-	}
-	
-	/**
-	 * platform independent file.getPath() 
-	 * 
-	 * @param path the path to transform, or {@code null}
-	 * @return The result will have alle platform path separators replaced by "/".
-	 */
-	public static String asPath(String path) {
-		if(path == null) {
-			return null;
-		}
-		return path.replace(File.separator, "/");
-	}
+
+    /**
+     * platform independent file.getPath()
+     * 
+     * @param file
+     *            the file to transform, or {@code null}
+     * @return The result of file.getPath() with all path Separators beeing a "/", or {@code null}
+     *         Needed to transform Windows path separators into slashes.
+     */
+    public static String asPath(File file) {
+        if (file == null) {
+            return null;
+        }
+        return asPath(file.getPath());
+    }
+
+    /**
+     * platform independent file.getPath()
+     * 
+     * @param path
+     *            the path to transform, or {@code null}
+     * @return The result will have alle platform path separators replaced by "/".
+     */
+    public static String asPath(String path) {
+        if (path == null) {
+            return null;
+        }
+        return path.replace(File.separator, "/");
+    }
 }

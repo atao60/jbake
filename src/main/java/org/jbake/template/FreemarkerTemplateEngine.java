@@ -43,7 +43,8 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
 
     private Configuration templateCfg;
 
-    public FreemarkerTemplateEngine(final CompositeConfiguration config, final ContentStore db, final File destination, final File templatesPath) {
+    public FreemarkerTemplateEngine(final CompositeConfiguration config, final ContentStore db, final File destination,
+            final File templatesPath) {
         super(config, db, destination, templatesPath);
         createTemplateConfiguration(config, templatesPath);
     }
@@ -60,7 +61,8 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
     }
 
     @Override
-    public void renderDocument(final Map<String, Object> model, final String templateName, final Writer writer) throws RenderingException {
+    public void renderDocument(final Map<String, Object> model, final String templateName, final Writer writer)
+            throws RenderingException {
         try {
             Template template = templateCfg.getTemplate(templateName);
             template.process(new LazyLoadingModel(model, db), writer);
@@ -72,7 +74,8 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
     }
 
     /**
-     * A custom Freemarker model that avoids loading the whole documents into memory if not necessary.
+     * A custom Freemarker model that avoids loading the whole documents into memory if not
+     * necessary.
      */
     public static class LazyLoadingModel implements TemplateHashModel {
         private final SimpleHash eagerModel;
@@ -94,22 +97,22 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
                 return new SimpleSequence(DocumentList.wrap(query.iterator()));
             }
             if ("published_content".equals(key)) {
-            	List<ODocument> publishedContent = new ArrayList<ODocument>();
-            	String[] documentTypes = DocumentTypes.getDocumentTypes();
-            	for (String docType : documentTypes) {
-            		List<ODocument> query = db.getPublishedContent(docType);
-           		publishedContent.addAll(query);
-            	}
-            	return new SimpleSequence(DocumentList.wrap(publishedContent.iterator()));
+                List<ODocument> publishedContent = new ArrayList<ODocument>();
+                String[] documentTypes = DocumentTypes.getDocumentTypes();
+                for (String docType : documentTypes) {
+                    List<ODocument> query = db.getPublishedContent(docType);
+                    publishedContent.addAll(query);
+                }
+                return new SimpleSequence(DocumentList.wrap(publishedContent.iterator()));
             }
             if ("all_content".equals(key)) {
-            	List<ODocument> allContent = new ArrayList<ODocument>();
-            	String[] documentTypes = DocumentTypes.getDocumentTypes();
-            	for (String docType : documentTypes) {
-            		List<ODocument> query = db.getAllContent(docType);
-            		allContent.addAll(query);
-            	}
-            	return new SimpleSequence(DocumentList.wrap(allContent.iterator()));
+                List<ODocument> allContent = new ArrayList<ODocument>();
+                String[] documentTypes = DocumentTypes.getDocumentTypes();
+                for (String docType : documentTypes) {
+                    List<ODocument> query = db.getAllContent(docType);
+                    allContent.addAll(query);
+                }
+                return new SimpleSequence(DocumentList.wrap(allContent.iterator()));
             }
             if ("alltags".equals(key)) {
                 List<ODocument> query = db.getAllTagsFromPublishedPosts();
@@ -122,7 +125,7 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
             }
             String[] documentTypes = DocumentTypes.getDocumentTypes();
             for (String docType : documentTypes) {
-                if ((docType+"s").equals(key)) {
+                if ((docType + "s").equals(key)) {
                     return new SimpleSequence(DocumentList.wrap(db.getAllContent(docType).iterator()));
                 }
             }

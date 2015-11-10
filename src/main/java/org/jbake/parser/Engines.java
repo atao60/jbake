@@ -14,27 +14,36 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * <p>A singleton class giving access to markup engines. Markup engines are loaded based on classpath.
+ * <p>
+ * A singleton class giving access to markup engines. Markup engines are loaded based on classpath.
  * New engines may be registered either at runtime (not recommanded) or by putting a descriptor file
- * on classpath (recommanded).</p>
+ * on classpath (recommanded).
+ * </p>
  *
- * <p>The descriptor file must be found in <i>META-INF</i> directory and named
- * <i>org.jbake.parser.MarkupEngines.properties</i>. The format of the file is easy:</p>
+ * <p>
+ * The descriptor file must be found in <i>META-INF</i> directory and named
+ * <i>org.jbake.parser.MarkupEngines.properties</i>. The format of the file is easy:
+ * </p>
  * <code>
  * org.jbake.parser.RawMarkupEngine=html<br>
  * org.jbake.parser.AsciidoctorEngine=ad,adoc,asciidoc<br>
  * org.jbake.parser.MarkdownEngine=md<br>
  * </code>
- * <p>where the key is the class of the engine (must extend {@link org.jbake.parser.MarkupEngine} and have a no-arg
- * constructor and the value is a comma-separated list of file extensions that this engine is capable of proceeding.</p>
+ * <p>
+ * where the key is the class of the engine (must extend {@link org.jbake.parser.MarkupEngine} and
+ * have a no-arg constructor and the value is a comma-separated list of file extensions that this
+ * engine is capable of proceeding.
+ * </p>
  *
- * <p>Markup engines are singletons, so are typically used to initialize the underlying renderning engines. They
- * <b>must not</b> store specific information of a currently processed file (use {@link ParserContext the parser context}
- * for that).</p>
+ * <p>
+ * Markup engines are singletons, so are typically used to initialize the underlying renderning
+ * engines. They <b>must not</b> store specific information of a currently processed file (use
+ * {@link ParserContext the parser context} for that).
+ * </p>
  *
- * This class loads the engines only if they are found on classpath. If not, the engine is not registered. This allows
- * JBake to support multiple rendering engines without the explicit need to have them on classpath. This is a better
- * fit for embedding.
+ * This class loads the engines only if they are found on classpath. If not, the engine is not
+ * registered. This allows JBake to support multiple rendering engines without the explicit need to
+ * have them on classpath. This is a better fit for embedding.
  *
  * @author Cédric Champeau
  *
@@ -70,7 +79,8 @@ public class Engines {
     private void registerEngine(String fileExtension, MarkupEngine markupEngine) {
         MarkupEngine old = parsers.put(fileExtension, markupEngine);
         if (old != null) {
-            LOGGER.warn("Registered a markup engine for extension [.{}] but another one was already defined: {}", fileExtension, old);
+            LOGGER.warn("Registered a markup engine for extension [.{}] but another one was already defined: {}",
+                    fileExtension, old);
         }
     }
 
@@ -79,16 +89,19 @@ public class Engines {
     }
 
     /**
-     * This method is used to search for a specific class, telling if loading the engine would succeed. This is
-     * typically used to avoid loading optional modules.
+     * This method is used to search for a specific class, telling if loading the engine would
+     * succeed. This is typically used to avoid loading optional modules.
      *
-     * @param engineClassName engine class, used both as a hint to find it and to create the engine itself.
+     * @param engineClassName
+     *            engine class, used both as a hint to find it and to create the engine itself.
      * @return null if the engine is not available, an instance of the engine otherwise
      */
     private static MarkupEngine tryLoadEngine(String engineClassName) {
         try {
             @SuppressWarnings("unchecked")
-            Class<? extends MarkupEngine> engineClass = (Class<? extends MarkupEngine>) Class.forName(engineClassName, false, Engines.class.getClassLoader());
+            Class<? extends MarkupEngine> engineClass =
+                    (Class<? extends MarkupEngine>) Class.forName(engineClassName, false,
+                            Engines.class.getClassLoader());
             return engineClass.newInstance();
         } catch (ClassNotFoundException e) {
             return new ErrorEngine(engineClassName);
@@ -103,8 +116,9 @@ public class Engines {
     }
 
     /**
-     * This method is used internally to load markup engines. Markup engines are found using descriptor files on classpath, so
-     * adding an engine is as easy as adding a jar on classpath with the descriptor file included.
+     * This method is used internally to load markup engines. Markup engines are found using
+     * descriptor files on classpath, so adding an engine is as easy as adding a jar on classpath
+     * with the descriptor file included.
      */
     private static void loadEngines() {
         try {
@@ -116,7 +130,7 @@ public class Engines {
                 props.load(url.openStream());
                 for (Map.Entry<Object, Object> entry : props.entrySet()) {
                     String className = (String) entry.getKey();
-                    String[] extensions = ((String)entry.getValue()).split(",");
+                    String[] extensions = ((String) entry.getValue()).split(",");
                     registerEngine(className, extensions);
                 }
             }

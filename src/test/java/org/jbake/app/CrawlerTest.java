@@ -25,8 +25,8 @@ public class CrawlerTest {
     private CompositeConfiguration config;
     private ContentStore db;
     private File sourceFolder;
-	
-	@Before
+
+    @Before
     public void setup() throws Exception, IOException, URISyntaxException {
         URL sourceUrl = this.getClass().getResource("/");
 
@@ -37,7 +37,7 @@ public class CrawlerTest {
 
         config = ConfigUtil.load(new File(this.getClass().getResource("/").getFile()));
         Assert.assertEquals(".html", config.getString(Keys.OUTPUT_EXTENSION));
-        db = DBUtil.createDB("memory", "documents"+System.currentTimeMillis());
+        db = DBUtil.createDB("memory", "documents" + System.currentTimeMillis());
     }
 
     @After
@@ -45,23 +45,24 @@ public class CrawlerTest {
         db.drop();
         db.close();
     }
-	@Test
-	public void crawl() throws ConfigurationException {
+
+    @Test
+    public void crawl() throws ConfigurationException {
         Crawler crawler = new Crawler(db, sourceFolder, config);
         crawler.crawl(new File(sourceFolder.getPath() + File.separator + config.getString(Keys.CONTENT_FOLDER)));
 
         Assert.assertEquals(2, crawler.getDocumentCount("post"));
         Assert.assertEquals(3, crawler.getDocumentCount("page"));
-        
+
         List<ODocument> results = db.getPublishedPosts();
-//                query(new OSQLSynchQuery<ODocument>("select * from post where status='published' order by date desc"));
+        //                query(new OSQLSynchQuery<ODocument>("select * from post where status='published' order by date desc"));
         DocumentList list = DocumentList.wrap(results.iterator());
-        for (Map<String,Object> content : list) {
-        	assertThat(content)
-        		.containsKey("rootpath")
-        		.containsValue("../../");
+        for (Map<String, Object> content : list) {
+            assertThat(content)
+                    .containsKey("rootpath")
+                    .containsValue("../../");
         }
-        
+
     }
-	
+
 }

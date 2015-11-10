@@ -55,12 +55,12 @@ public class GroovyRendererTest {
         while (keys.hasNext()) {
             String key = keys.next();
             if (key.startsWith("template") && key.endsWith(".file")) {
-                String old = (String)config.getProperty(key);
-                config.setProperty(key, old.substring(0, old.length()-4)+".gsp");
+                String old = (String) config.getProperty(key);
+                config.setProperty(key, old.substring(0, old.length() - 4) + ".gsp");
             }
         }
         Assert.assertEquals(".html", config.getString(Keys.OUTPUT_EXTENSION));
-        db = DBUtil.createDB("memory", "documents"+System.currentTimeMillis());
+        db = DBUtil.createDB("memory", "documents" + System.currentTimeMillis());
     }
 
     @After
@@ -71,34 +71,36 @@ public class GroovyRendererTest {
 
     @Test
     public void renderPost() throws Exception {
-    	// setup
+        // setup
         Crawler crawler = new Crawler(db, sourceFolder, config);
         crawler.crawl(new File(sourceFolder.getPath() + File.separator + "content"));
         Parser parser = new Parser(config, sourceFolder.getPath());
         Renderer renderer = new Renderer(db, destinationFolder, templateFolder, config);
         String filename = "second-post.html";
 
-        File sampleFile = new File(sourceFolder.getPath() + File.separator + "content" + File.separator + "blog" + File.separator + "2013" + File.separator + filename);
+        File sampleFile =
+                new File(sourceFolder.getPath() + File.separator + "content" + File.separator + "blog" + File.separator
+                        + "2013" + File.separator + filename);
         Map<String, Object> content = parser.processFile(sampleFile);
         content.put("uri", "/" + filename);
         renderer.render(content);
         File outputFile = new File(destinationFolder, filename);
         Assert.assertTrue(outputFile.exists());
-        
+
         // verify
         String output = FileUtils.readFileToString(outputFile);
-        assertThat(output) 
-        	.contains("<h2>Second Post</h2>")
-        	.contains("<p class=\"post-date\">28")
-        	.contains("2013</p>")
-        	.contains("Lorem ipsum dolor sit amet")
-        	.contains("<h5>Published Posts</h5>")
-        	.contains("blog/2012/first-post.html");
+        assertThat(output)
+                .contains("<h2>Second Post</h2>")
+                .contains("<p class=\"post-date\">28")
+                .contains("2013</p>")
+                .contains("Lorem ipsum dolor sit amet")
+                .contains("<h5>Published Posts</h5>")
+                .contains("blog/2012/first-post.html");
     }
-    
+
     @Test
     public void renderPage() throws Exception {
-    	// setup
+        // setup
         Crawler crawler = new Crawler(db, sourceFolder, config);
         crawler.crawl(new File(sourceFolder.getPath() + File.separator + "content"));
         Parser parser = new Parser(config, sourceFolder.getPath());
@@ -111,14 +113,14 @@ public class GroovyRendererTest {
         renderer.render(content);
         File outputFile = new File(destinationFolder, filename);
         Assert.assertTrue(outputFile.exists());
-        
+
         // verify
         String output = FileUtils.readFileToString(outputFile);
-        assertThat(output) 
-	        .contains("<h4>About</h4>")
-	    	.contains("All about stuff!")
-	    	.contains("<h5>Published Pages</h5>")
-	    	.contains("/projects.html");
+        assertThat(output)
+                .contains("<h4>About</h4>")
+                .contains("All about stuff!")
+                .contains("<h5>Published Pages</h5>")
+                .contains("/projects.html");
     }
 
     @Test
@@ -133,12 +135,12 @@ public class GroovyRendererTest {
         //validate
         File outputFile = new File(destinationFolder, "index.html");
         Assert.assertTrue(outputFile.exists());
-        
+
         // verify
         String output = FileUtils.readFileToString(outputFile);
-        assertThat(output) 
-        	.contains("<h4><a href=\"blog/2012/first-post.html\">First Post</a></h4>")
-        	.contains("<h4><a href=\"blog/2013/second-post.html\">Second Post</a></h4>");
+        assertThat(output)
+                .contains("<h4><a href=\"blog/2012/first-post.html\">First Post</a></h4>")
+                .contains("<h4><a href=\"blog/2013/second-post.html\">Second Post</a></h4>");
     }
 
     @Test
@@ -149,13 +151,13 @@ public class GroovyRendererTest {
         renderer.renderFeed("feed.xml");
         File outputFile = new File(destinationFolder, "feed.xml");
         Assert.assertTrue(outputFile.exists());
-        
+
         // verify
         String output = FileUtils.readFileToString(outputFile);
-        assertThat(output) 
-        	.contains("<description>My corner of the Internet</description>")
-        	.contains("<title>Second Post</title>")
-        	.contains("<title>First Post</title>");
+        assertThat(output)
+                .contains("<description>My corner of the Internet</description>")
+                .contains("<title>Second Post</title>")
+                .contains("<title>First Post</title>");
     }
 
     @Test
@@ -166,12 +168,12 @@ public class GroovyRendererTest {
         renderer.renderArchive("archive.html");
         File outputFile = new File(destinationFolder, "archive.html");
         Assert.assertTrue(outputFile.exists());
-        
+
         // verify
         String output = FileUtils.readFileToString(outputFile);
-        assertThat(output) 
-        	.contains("<a href=\"blog/2013/second-post.html\">Second Post</a></h4>")
-        	.contains("<a href=\"blog/2012/first-post.html\">First Post</a></h4>");
+        assertThat(output)
+                .contains("<a href=\"blog/2013/second-post.html\">Second Post</a></h4>")
+                .contains("<a href=\"blog/2012/first-post.html\">First Post</a></h4>");
     }
 
     @Test
@@ -180,22 +182,22 @@ public class GroovyRendererTest {
         crawler.crawl(new File(sourceFolder.getPath() + File.separator + "content"));
         Renderer renderer = new Renderer(db, destinationFolder, templateFolder, config);
         renderer.renderTags(crawler.getTags(), "tags");
-        
+
         // verify
         File outputFile = new File(destinationFolder + File.separator + "tags" + File.separator + "blog.html");
         Assert.assertTrue(outputFile.exists());
         String output = FileUtils.readFileToString(outputFile);
-        assertThat(output) 
-        	.contains("<a href=\"blog/2013/second-post.html\">Second Post</a></h4>")
-        	.contains("<a href=\"blog/2012/first-post.html\">First Post</a></h4>");
+        assertThat(output)
+                .contains("<a href=\"blog/2013/second-post.html\">Second Post</a></h4>")
+                .contains("<a href=\"blog/2012/first-post.html\">First Post</a></h4>");
     }
 
     @Test
     public void renderSitemap() throws Exception {
-    	DocumentTypes.addDocumentType("paper");
-    	DBUtil.updateSchema(db);
-    	
-    	Crawler crawler = new Crawler(db, sourceFolder, config);
+        DocumentTypes.addDocumentType("paper");
+        DBUtil.updateSchema(db);
+
+        Crawler crawler = new Crawler(db, sourceFolder, config);
         crawler.crawl(new File(sourceFolder.getPath() + File.separator + "content"));
         Renderer renderer = new Renderer(db, destinationFolder, templateFolder, config);
         renderer.renderSitemap("sitemap.xml");
@@ -204,10 +206,10 @@ public class GroovyRendererTest {
 
         // verify
         String output = FileUtils.readFileToString(outputFile);
-        assertThat(output) 
-        	.contains("blog/2013/second-post.html")
-        	.contains("blog/2012/first-post.html")
-        	.contains("papers/published-paper.html")
-        	.doesNotContain("draft-paper.html");
+        assertThat(output)
+                .contains("blog/2013/second-post.html")
+                .contains("blog/2012/first-post.html")
+                .contains("papers/published-paper.html")
+                .doesNotContain("draft-paper.html");
     }
 }

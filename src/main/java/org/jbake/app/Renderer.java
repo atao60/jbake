@@ -38,8 +38,10 @@ public class Renderer {
     /**
      * Creates a new instance of Renderer with supplied references to folders.
      *
-     * @param destination   The destination folder
-     * @param templatesPath The templates folder
+     * @param destination
+     *            The destination folder
+     * @param templatesPath
+     *            The templates folder
      */
     public Renderer(ContentStore db, File destination, File templatesPath, CompositeConfiguration config) {
         this.destination = destination;
@@ -48,24 +50,26 @@ public class Renderer {
     }
 
     private String findTemplateName(String docType) {
-        return config.getString("template."+docType+".file");
+        return config.getString("template." + docType + ".file");
     }
 
     /**
      * Render the supplied content to a file.
      *
-     * @param content The content to renderDocument
+     * @param content
+     *            The content to renderDocument
      * @throws Exception
      */
     public void render(Map<String, Object> content) throws Exception {
-    	String docType = (String) content.get("type");
+        String docType = (String) content.get("type");
         String outputFilename = destination.getPath() + File.separatorChar + (String) content.get("uri");
         if (outputFilename.lastIndexOf(".") > 0) {
-        	outputFilename = outputFilename.substring(0, outputFilename.lastIndexOf("."));
+            outputFilename = outputFilename.substring(0, outputFilename.lastIndexOf("."));
         }
 
         // delete existing versions if they exist in case status has changed either way
-        File draftFile = new File(outputFilename + config.getString(Keys.DRAFT_SUFFIX) + FileUtil.findExtension(config, docType));
+        File draftFile =
+                new File(outputFilename + config.getString(Keys.DRAFT_SUFFIX) + FileUtil.findExtension(config, docType));
         if (draftFile.exists()) {
             draftFile.delete();
         }
@@ -79,7 +83,7 @@ public class Renderer {
             outputFilename = outputFilename + config.getString(Keys.DRAFT_SUFFIX);
         }
 
-        File outputFile = new File(outputFilename + FileUtil.findExtension(config,docType));
+        File outputFile = new File(outputFilename + FileUtil.findExtension(config, docType));
         StringBuilder sb = new StringBuilder();
         sb.append("Rendering [").append(outputFile).append("]... ");
         Map<String, Object> model = new HashMap<String, Object>();
@@ -111,8 +115,9 @@ public class Renderer {
     /**
      * Render an index file using the supplied content.
      *
-     * @param indexFile The name of the output file
-     * @throws Exception 
+     * @param indexFile
+     *            The name of the output file
+     * @throws Exception
      */
     public void renderIndex(String indexFile) throws Exception {
         File outputFile = new File(destination.getPath() + File.separator + indexFile);
@@ -137,9 +142,11 @@ public class Renderer {
 
     /**
      * Render an XML sitemap file using the supplied content.
-     * @throws Exception 
+     * 
+     * @throws Exception
      *
-     * @see <a href="https://support.google.com/webmasters/answer/156184?hl=en&ref_topic=8476">About Sitemaps</a>
+     * @see <a href="https://support.google.com/webmasters/answer/156184?hl=en&ref_topic=8476">About
+     *      Sitemaps</a>
      * @see <a href="http://www.sitemaps.org/">Sitemap protocol</a>
      */
     public void renderSitemap(String sitemapFile) throws Exception {
@@ -167,8 +174,9 @@ public class Renderer {
     /**
      * Render an XML feed file using the supplied content.
      *
-     * @param feedFile The name of the output file
-     * @throws Exception 
+     * @param feedFile
+     *            The name of the output file
+     * @throws Exception
      */
     public void renderFeed(String feedFile) throws Exception {
         File outputFile = new File(destination.getPath() + File.separator + feedFile);
@@ -194,8 +202,9 @@ public class Renderer {
     /**
      * Render an archive file using the supplied content.
      *
-     * @param archiveFile The name of the output file
-     * @throws Exception 
+     * @param archiveFile
+     *            The name of the output file
+     * @throws Exception
      */
     public void renderArchive(String archiveFile) throws Exception {
         File outputFile = new File(destination.getPath() + File.separator + archiveFile);
@@ -221,12 +230,14 @@ public class Renderer {
     /**
      * Render tag files using the supplied content.
      *
-     * @param tags    The content to renderDocument
-     * @param tagPath The output path
-     * @throws Exception 
+     * @param tags
+     *            The content to renderDocument
+     * @param tagPath
+     *            The output path
+     * @throws Exception
      */
     public void renderTags(Set<String> tags, String tagPath) throws Exception {
-    	final List<String> errors = new LinkedList<String>();
+        final List<String> errors = new LinkedList<String>();
         for (String tag : tags) {
             Map<String, Object> model = new HashMap<String, Object>();
             model.put("renderer", renderingEngine);
@@ -235,7 +246,9 @@ public class Renderer {
             map.put("rootpath", "../");
             model.put("content", map);
 
-            File outputFile = new File(destination.getPath() + File.separator + tagPath + File.separator + tag + config.getString(Keys.OUTPUT_EXTENSION));
+            File outputFile =
+                    new File(destination.getPath() + File.separator + tagPath + File.separator + tag
+                            + config.getString(Keys.OUTPUT_EXTENSION));
             StringBuilder sb = new StringBuilder();
             sb.append("Rendering tags [").append(outputFile).append("]... ");
 
@@ -252,26 +265,27 @@ public class Renderer {
             }
         }
         if (!errors.isEmpty()) {
-        	StringBuilder sb = new StringBuilder();
-        	sb.append("Failed to render tags. Cause(s):");
-        	for(String error: errors) {
-        		sb.append("\n" + error);
-        	}
-        	throw new Exception(sb.toString());
+            StringBuilder sb = new StringBuilder();
+            sb.append("Failed to render tags. Cause(s):");
+            for (String error : errors) {
+                sb.append("\n" + error);
+            }
+            throw new Exception(sb.toString());
         }
     }
-    
+
     /**
-     * Builds simple map of values, which are exposed when rendering index/archive/sitemap/feed/tags.
+     * Builds simple map of values, which are exposed when rendering
+     * index/archive/sitemap/feed/tags.
      * 
      * @param type
      * @return
      */
     private Map<String, Object> buildSimpleModel(String type) {
-    	Map<String, Object> content = new HashMap<String, Object>();
-    	content.put("type", type);
-    	content.put("rootpath", "");
-    	// add any more keys here that need to have a default value to prevent need to perform null check in templates
-    	return content;
+        Map<String, Object> content = new HashMap<String, Object>();
+        content.put("type", type);
+        content.put("rootpath", "");
+        // add any more keys here that need to have a default value to prevent need to perform null check in templates
+        return content;
     }
 }

@@ -41,9 +41,9 @@ import java.util.Set;
 import org.jbake.app.ContentStore;
 
 /**
- * Renders documents using a Groovy template engine. Depending on the file extension of the template, the template
- * engine will either be a {@link groovy.text.SimpleTemplateEngine}, or an {@link groovy.text.XmlTemplateEngine}
- * (.gxml).
+ * Renders documents using a Groovy template engine. Depending on the file extension of the
+ * template, the template engine will either be a {@link groovy.text.SimpleTemplateEngine}, or an
+ * {@link groovy.text.XmlTemplateEngine} (.gxml).
  *
  * @author Cédric Champeau
  */
@@ -51,12 +51,14 @@ public class GroovyTemplateEngine extends AbstractTemplateEngine {
 
     private final Map<String, Template> cachedTemplates = new HashMap<String, Template>();
 
-    public GroovyTemplateEngine(final CompositeConfiguration config, final ContentStore db, final File destination, final File templatesPath) {
+    public GroovyTemplateEngine(final CompositeConfiguration config, final ContentStore db, final File destination,
+            final File templatesPath) {
         super(config, db, destination, templatesPath);
     }
 
     @Override
-    public void renderDocument(final Map<String, Object> model, final String templateName, final Writer writer) throws RenderingException {
+    public void renderDocument(final Map<String, Object> model, final String templateName, final Writer writer)
+            throws RenderingException {
         try {
             Template template = findTemplate(templateName);
             Writable writable = template.make(wrap(model));
@@ -66,12 +68,15 @@ public class GroovyTemplateEngine extends AbstractTemplateEngine {
         }
     }
 
-    private Template findTemplate(final String templateName) throws SAXException, ParserConfigurationException, ClassNotFoundException, IOException {
+    private Template findTemplate(final String templateName) throws SAXException, ParserConfigurationException,
+            ClassNotFoundException, IOException {
         TemplateEngine ste = templateName.endsWith(".gxml") ? new XmlTemplateEngine() : new SimpleTemplateEngine();
         File sourceTemplate = new File(templatesPath, templateName);
         Template template = cachedTemplates.get(templateName);
         if (template == null) {
-            template = ste.createTemplate(new InputStreamReader(new BufferedInputStream(new FileInputStream(sourceTemplate)), config.getString(Keys.TEMPLATE_ENCODING)));
+            template =
+                    ste.createTemplate(new InputStreamReader(new BufferedInputStream(
+                            new FileInputStream(sourceTemplate)), config.getString(Keys.TEMPLATE_ENCODING)));
             cachedTemplates.put(templateName, template);
         }
         return template;
@@ -98,22 +103,22 @@ public class GroovyTemplateEngine extends AbstractTemplateEngine {
                         return DocumentList.wrap(query.iterator());
                     }
                     if ("published_content".equals(key)) {
-                    	List<ODocument> publishedContent = new ArrayList<ODocument>();
-                    	String[] documentTypes = DocumentTypes.getDocumentTypes();
-                    	for (String docType : documentTypes) {
-                    		List<ODocument> query = db.getPublishedContent(docType);
-                    		publishedContent.addAll(query);
-                    	}
-                    	return DocumentList.wrap(publishedContent.iterator());
+                        List<ODocument> publishedContent = new ArrayList<ODocument>();
+                        String[] documentTypes = DocumentTypes.getDocumentTypes();
+                        for (String docType : documentTypes) {
+                            List<ODocument> query = db.getPublishedContent(docType);
+                            publishedContent.addAll(query);
+                        }
+                        return DocumentList.wrap(publishedContent.iterator());
                     }
                     if ("all_content".equals(key)) {
-                    	List<ODocument> allContent = new ArrayList<ODocument>();
-                    	String[] documentTypes = DocumentTypes.getDocumentTypes();
-                    	for (String docType : documentTypes) {
-                    		List<ODocument> query = db.getAllContent(docType);
-                    		allContent.addAll(query);
-                    	}
-                    	return DocumentList.wrap(allContent.iterator());
+                        List<ODocument> allContent = new ArrayList<ODocument>();
+                        String[] documentTypes = DocumentTypes.getDocumentTypes();
+                        for (String docType : documentTypes) {
+                            List<ODocument> query = db.getAllContent(docType);
+                            allContent.addAll(query);
+                        }
+                        return DocumentList.wrap(allContent.iterator());
                     }
                     if ("alltags".equals(key)) {
                         List<ODocument> query = db.getAllTagsFromPublishedPosts();
@@ -126,7 +131,7 @@ public class GroovyTemplateEngine extends AbstractTemplateEngine {
                     }
                     String[] documentTypes = DocumentTypes.getDocumentTypes();
                     for (String docType : documentTypes) {
-                        if ((docType+"s").equals(key)) {
+                        if ((docType + "s").equals(key)) {
                             return DocumentList.wrap(db.getAllContent(docType).iterator());
                         }
                     }

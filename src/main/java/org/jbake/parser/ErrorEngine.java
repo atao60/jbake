@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * An internal rendering engine used to notify the user that the markup format he used requires an engine that couldn't
- * be loaded.
+ * An internal rendering engine used to notify the user that the markup format he used requires an
+ * engine that couldn't be loaded.
  *
  * @author Cédric Champeau
  */

@@ -42,17 +42,17 @@ public class AsciidoctorEngine extends MarkupEngine {
 
     public AsciidoctorEngine() {
         Class engineClass = Asciidoctor.class;
-        assert engineClass!=null;
+        assert engineClass != null;
     }
 
     private Asciidoctor getEngine() {
         try {
             lock.readLock().lock();
-            if (engine==null) {
+            if (engine == null) {
                 lock.readLock().unlock();
                 try {
                     lock.writeLock().lock();
-                    if (engine==null) {
+                    if (engine == null) {
                         LOGGER.info("Initializing Asciidoctor engine...");
                         engine = Asciidoctor.Factory.create();
                         LOGGER.info("Asciidoctor engine initialized.");
@@ -74,13 +74,13 @@ public class AsciidoctorEngine extends MarkupEngine {
         DocumentHeader header = asciidoctor.readDocumentHeader(context.getFile());
         Map<String, Object> contents = context.getContents();
         if (header.getDocumentTitle() != null) {
-        	contents.put("title", header.getDocumentTitle().getCombined());
+            contents.put("title", header.getDocumentTitle().getCombined());
         }
         Map<String, Object> attributes = header.getAttributes();
         for (String key : attributes.keySet()) {
             if (key.startsWith("jbake-")) {
                 Object val = attributes.get(key);
-                if (val!=null) {
+                if (val != null) {
                     String pKey = key.substring(6);
                     contents.put(pKey, val);
                 }
@@ -91,7 +91,7 @@ public class AsciidoctorEngine extends MarkupEngine {
                     DateFormat df = new SimpleDateFormat(context.getConfig().getString(Keys.DATE_FORMAT));
                     Date date = null;
                     try {
-                        date = df.parse((String)attributes.get(key));
+                        date = df.parse((String) attributes.get(key));
                         contents.put("date", date);
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -130,7 +130,7 @@ public class AsciidoctorEngine extends MarkupEngine {
         CompositeConfiguration config = context.getConfig();
         final AttributesBuilder attributes = attributes(config.getStringArray(Keys.ASCIIDOCTOR_ATTRIBUTES));
         if (config.getBoolean(Keys.ASCIIDOCTOR_ATTRIBUTES_EXPORT, false)) {
-            final String prefix = config.getString(  Keys.ASCIIDOCTOR_ATTRIBUTES_EXPORT_PREFIX, "");
+            final String prefix = config.getString(Keys.ASCIIDOCTOR_ATTRIBUTES_EXPORT_PREFIX, "");
             for (final Iterator<String> it = config.getKeys(); it.hasNext();) {
                 final String key = it.next();
                 if (!key.startsWith("asciidoctor")) {
@@ -142,7 +142,7 @@ public class AsciidoctorEngine extends MarkupEngine {
         final Options options = options().attributes(attributes.get()).get();
         for (final Iterator<String> iterator = optionsSubset.getKeys(); iterator.hasNext();) {
             final String name = iterator.next();
-            options.setOption(name,  guessTypeByContent(optionsSubset.getString(name)));
+            options.setOption(name, guessTypeByContent(optionsSubset.getString(name)));
         }
         options.setBaseDir(context.getFile().getParentFile().getAbsolutePath());
         options.setSafe(UNSAFE);
@@ -151,13 +151,14 @@ public class AsciidoctorEngine extends MarkupEngine {
 
     /**
      * Guess the type by content it has.
+     * 
      * @param value
      * @return boolean,integer of string as fallback
      */
-    private static Object guessTypeByContent(String value){
-        if (toBooleanObject(value)!=null)
+    private static Object guessTypeByContent(String value) {
+        if (toBooleanObject(value) != null)
             return toBooleanObject(value);
-        if(isNumber(value))
+        if (isNumber(value))
             return toInt(value);
         return value;
     }
